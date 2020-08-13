@@ -30,6 +30,8 @@ function filter(value) {
   traverse(this);
 }
 
+// 饿了么的filter优化
+// 在element的`element/packages/tree/src/model/tree-store.js`中的filter函数
 // 时间复杂度稳定在O(n)
 function myFilter(value) {
   const filterNodeMethod = this.filterNodeMethod;

@@ -49,34 +49,34 @@ const data = [
       },
     ],
   },
-]
-
+];
+// 智云第一周 每周一练
 function filterTreeOne(nodes, keyword) {
   const setFlagAndRemoveDeepChild = curNodes => {
-    let isParentNeed = false
+    let isParentNeed = false;
     for (let i = 0; i < curNodes.length; i++) {
-      const item = curNodes[i]
+      const item = curNodes[i];
       if (item.children && item.children.length !== 0) {
-        item.isNeed = setFlagAndRemoveDeepChild(item.children)
+        item.isNeed = setFlagAndRemoveDeepChild(item.children);
       }
       if (item.txt.includes(keyword)) {
-        isParentNeed ? '' : (isParentNeed = true)
-        item.isNeed = true
+        isParentNeed ? '' : (isParentNeed = true);
+        item.isNeed = true;
       } else {
-        item.isNeed ? (isParentNeed = true) : (item.isNeed = false)
+        item.isNeed ? (isParentNeed = true) : (item.isNeed = false);
       }
       if (!item.isNeed) {
-        curNodes.splice(i, 1)
-        i--
+        curNodes.splice(i, 1);
+        i--;
       }
     }
-    return isParentNeed
-  }
-  setFlagAndRemoveDeepChild(nodes)
-  return nodes
+    return isParentNeed;
+  };
+  setFlagAndRemoveDeepChild(nodes);
+  return nodes;
 }
 
-console.log(filterTreeOne(data, '测试121'))
+console.log(filterTreeOne(data, '测试121'));
 
 // let a = [1, 2, 3]
 // for (let i = 0; i < a.length; i++) {
