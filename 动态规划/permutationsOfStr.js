@@ -1,18 +1,27 @@
 // 字符串的全排列
-// 我写的
-function permutationsOfStr2(str, result = '') {
-  if (str.length === 1) {
-    console.log(result + str[0])
-    return
-  }
-  for (let i = 0; i < str.length; i++) {
-    const res = [...str]
-    const s = res.splice(i, 1)
-    permutationsOfStr2(res, result + s)
-  }
+/**
+ * 输入abc
+ * 输出：["abc","acb","bac","bca","cab","cba"]
+ * @param {*} str
+ */
+function permutations(str) {
+  const arr = [];
+  const permute = (str, result = '') => {
+    if (str.length === 1) {
+      arr.push(result + str[0]);
+      return;
+    }
+    for (let i = 0; i < str.length; i++) {
+      const res = [...str];
+      const s = res.splice(i, 1);
+      permute(res, result + s);
+    }
+  };
+  permute(str);
+  return arr;
 }
-let str = ['a', 'b', 'c']
-permutationsOfStr2(str)
+let str = 'abc';
+console.log(permutations(str));
 
 // 彬哥写的
 var permute = function (nums, count) {

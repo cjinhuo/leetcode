@@ -36,6 +36,7 @@ function dismantleArray(a, b) {
   };
   return recurse(a, b);
 }
+
 const res = dismantleArray([1, [2, 3, [4]], 5, [7, 8, [10]], [null, 'o']], '[a, [b,z, g, y, [c], e], d, f,[t], [k,p,[o,[u]]]]');
 console.log(res);
 // {
