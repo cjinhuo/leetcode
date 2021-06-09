@@ -7,7 +7,7 @@ let bfsWithoutRecursion = function (root) {
     const node = stack.shift()
     result.push(node.val)
     if (node.left) {
-      stack.push( .left)
+      stack.push(node.left)
     }
     if (node.right) {
       stack.push(node.right)

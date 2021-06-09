@@ -1,6 +1,5 @@
-
-class MyPromise{
-  constructor(func){
+class MyPromise {
+  constructor(func) {
     this.status = 'pending'
     this.value = undefined // status为resolved时返回的值
     this.reason = undefined // status为rejected时返回的值
@@ -14,8 +13,8 @@ class MyPromise{
       this.reject(error)
     }
   }
-    
-  // 
+
+  //
   reject(error) {
     if (this.status === 'pending') {
       this.status = 'rejected'
@@ -43,18 +42,18 @@ class MyPromise{
   // then函数可以传一个或两个函数
   then(onFullfilled, onRejected) {
     let tempPromise,
-        self = this
-    switch(this.status) {
+      self = this
+    switch (this.status) {
       case 'pending':
         tempPromise = new MyPromise((resolve, reject) => {
           self.onFullfilledArray.push(function (value) {
             try {
-            let temp = onFullfilled(value)
+              let temp = onFullfilled(value)
               resolve(temp)
             } catch (error) {
               reject(error)
             }
-          });
+          })
           self.onRejectedArray.push(function (reason) {
             try {
               let temp = onRejected(reason)
@@ -62,9 +61,9 @@ class MyPromise{
             } catch (error) {
               reject(error)
             }
-          });
+          })
         })
-        break;
+        break
       case 'resolved':
         tempPromise = new MyPromise((resolve, reject) => {
           try {
@@ -74,7 +73,7 @@ class MyPromise{
             reject(error)
           }
         })
-        break;
+        break
       case 'rejected':
         tempPromise = new MyPromise((resolve, reject) => {
           try {
@@ -84,8 +83,8 @@ class MyPromise{
             reject(error)
           }
         })
-        
-        break;
+
+        break
     }
     return tempPromise
   }
@@ -103,7 +102,7 @@ class MyPromise{
             } catch (error) {
               reject(error)
             }
-          });
+          })
           self.onRejectedArray.push(function (reason) {
             try {
               let temp = onRejected(reason)
@@ -111,9 +110,9 @@ class MyPromise{
             } catch (error) {
               reject(error)
             }
-          });
+          })
         })
-        break;
+        break
       case 'resolved':
         tempPromise = new MyPromise((resolve, reject) => {
           try {
@@ -123,7 +122,7 @@ class MyPromise{
             reject(error)
           }
         })
-        break;
+        break
       case 'rejected':
         tempPromise = new MyPromise((resolve, reject) => {
           try {
@@ -133,23 +132,24 @@ class MyPromise{
             reject(error)
           }
         })
-        break;
+        break
     }
     return tempPromise
   }
 }
 
-
 let myPromise = new MyPromise((resolve, reject) => {
   console.log('请求数据...')
   setTimeout(() => {
     resolve(1)
-  }, 1000);
-}).then(res => {
-  console.log('then', res)
-}).catch(error => {
-  console.log('error', error)
+  }, 1000)
 })
+  .then(res => {
+    console.log('then', res)
+  })
+  .catch(error => {
+    console.log('error', error)
+  })
 // .then(res => {
 //   console.log(typeof res)
 //   console.log('第二个then:', res)
