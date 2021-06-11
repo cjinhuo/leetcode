@@ -10,14 +10,14 @@ class MyPromise {
     this.reason = undefined
     this.onResolvedCallbacks = []
     this.onRejectedCallbacks = []
-    let resolve = value => {
+    this.resolve = value => {
       if (this.state === this.status.pending) {
         this.state = this.status.fulfilled
         this.value = value
         this.onResolvedCallbacks.forEach(fn => fn())
       }
     }
-    let reject = reason => {
+    this.reject = reason => {
       if (this.state === this.status.pending) {
         this.state = this.status.rejected
         this.reason = reason
@@ -25,30 +25,29 @@ class MyPromise {
       }
     }
     try {
-      executor(resolve, reject)
+      executor(this.resolve, this.reject)
     } catch (err) {
       reject(err)
     }
   }
   then(onFulfilled, onRejected) {
-    return new MyPromise((resolve, reject) => {
-      switch (this.state) {
-        case this.status.pending:
-          this.onResolvedCallbacks.push(() => {
-            resolve(onFulfilled(this.value))
-          })
-          this.onRejectedCallbacks.push(() => {
-            reject(onRejected(this.reason))
-          })
-          break
-        case this.status.fulfilled:
-          resolve(onFulfilled(this.value))
-          break
-        case this.status.rejected:
-          reject(onRejected(this.reason))
-          break
-      }
-    })
+    switch (this.state) {
+      case this.status.pending:
+        this.onResolvedCallbacks.push(() => {
+          this.resolve(onFulfilled(this.value))
+        })
+        this.onRejectedCallbacks.push(() => {
+          this.reject(onRejected(this.reason))
+        })
+        break
+      case this.status.fulfilled:
+        this.resolve(onFulfilled(this.value))
+        break
+      case this.status.rejected:
+        this.reject(onRejected(this.reason))
+        break
+    }
+    return this
   }
 }
 

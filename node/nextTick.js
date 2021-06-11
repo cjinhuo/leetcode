@@ -15,9 +15,9 @@
 // bar = 2;
 
 process.nextTick(() => {
-  console.log('nextTick');
-});
+  console.log('nextTick')
+})
 
 setImmediate(() => {
-  console.log('setImmediate');
-});
+  console.log('setImmediate')
+})
