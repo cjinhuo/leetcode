@@ -1,0 +1,22 @@
+{
+  "name": "leetcode",
+  "version": "1.0.0",
+  "description": "平时刷的一些leetcode和公司笔试题",
+  "main": "ali.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cjinhuo/leetcode.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cjinhuo/leetcode/issues"
+  },
+  "homepage": "https://github.com/cjinhuo/leetcode#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
