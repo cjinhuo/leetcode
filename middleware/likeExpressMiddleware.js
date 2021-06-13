@@ -45,7 +45,13 @@ class LikeExpress {
     }
     stack = this.routes
       .filter(route => {
-        return ~url.indexOf(route.path) && (route.method === method || route.method === 'all')
+        if (route.method === 'all') {
+          return ~url.indexOf(route.path)
+        }
+        if (route.method === method) {
+          return url === route.path
+        }
+        return false
       })
       .reduce((result, item) => {
         result = result.concat(item.stack)
@@ -55,11 +61,10 @@ class LikeExpress {
   }
 
   handle(req, res, stack) {
-    const next = () => {
+    const next = async () => {
       const middleware = stack.shift()
       if (middleware) {
-        debugger
-        middleware(req, res, next)
+        return middleware(req, res, next)
       }
     }
     next()

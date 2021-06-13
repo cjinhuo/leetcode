@@ -5,55 +5,51 @@ const express = require('./likeExpressMiddleware')
 const app = express()
 
 app.use((req, res, next) => {
-  console.log('请求开始...', req.method, req.url)
+  console.log('11 请求开始...', req.method, req.url)
   next()
+  console.log('11 after next')
 })
-app.use('/api', async (req, res, next) => {
-  console.log('处理 /api 路由')
-  await Promise.resolve().then(() => {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve('ok')
-      }, 2000)
-    })
-  })
-  console.log('promsie ok')
+app.use('/api', (req, res, next) => {
+  console.log('22 处理 /api 路由')
   next()
+  console.log('22 after next')
 })
 
 app.use((req, res, next) => {
   // 假设在处理 cookie
-  console.log('处理 cookie...')
+  console.log('33 处理 cookie...')
   req.cookie = {
     userId: 'abc123',
   }
   next()
+  console.log('33 after next')
 })
 
 app.get('/api', (req, res, next) => {
-  console.log('处理 /api 路由')
+  console.log('44 处理 get /api 路由')
   next()
+  console.log('44 after next')
 })
 
 app.post('/api', (req, res, next) => {
-  console.log('处理 /api 路由')
+  console.log('处理 post /api 路由')
   next()
 })
 
 // 模拟登录验证
 function loginCheck(req, res, next) {
-  console.log('模拟登录')
+  console.log('55 模拟登录')
   next()
-  // setTimeout(() => {
-  // })
+  console.log('55 after next')
 }
 
-app.use('/api/get-cookie', loginCheck, (req, res, next) => {
-  console.log('get /api/get-cookie...')
+app.get('/api/get-cookie', loginCheck, (req, res, next) => {
+  console.log('66 get /api/get-cookie...')
   res.json({
     errno: 0,
     data: req.cookie,
   })
+  console.log('66 after next')
 })
 
 app.use((req, res, next) => {
