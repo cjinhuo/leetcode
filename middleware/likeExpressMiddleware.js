@@ -1,5 +1,4 @@
 const http = require('http')
-const slice = Array.prototype.slice
 
 class LikeExpress {
   constructor() {
@@ -11,10 +10,10 @@ class LikeExpress {
     if (typeof path === 'string') {
       info.path = path
       // 从第二个参数开始，转换为数组，存入stack
-      info.stack = slice.call(arguments, 1)
+      info.stack = Array.prototype.slice.call(arguments, 1)
     } else {
       info.path = '/'
-      info.stack = slice.call(arguments, 0)
+      info.stack = Array.prototype.slice.call(arguments, 0)
     }
     return info
   }

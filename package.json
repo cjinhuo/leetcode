@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/cjinhuo/leetcode#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "koa": "^2.13.1"
   }
 }
