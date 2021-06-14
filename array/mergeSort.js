@@ -10,6 +10,7 @@ function mergeSort(arr) {
     while (p1 <= mid) {
       help.push(arr[p1++])
     }
+    // 清空右边数组
     while (p2 <= r) {
       help.push(arr[p2++])
     }
