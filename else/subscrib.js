@@ -9,19 +9,20 @@ function triggerHandlers(key) {
   const res = handles[key]
   res &&
     res.forEach(fn => {
-      if (typeof fn === 'function') {
-        fn()
-      }
+      fn()
     })
 }
 
-// 观察者模式 没有key对应
-const list = []
-function obSubscibe(fn) {
-  list.push(fn)
-}
-function obPublish() {
-  list.forEach(fn => {
-    fn()
-  })
-}
+subscribe('emitOne', () => {
+  console.log('trigger emitOne event')
+})
+
+subscribe('emitOne', () => {
+  console.log('another one callback')
+})
+
+subscribe('emitTwo', () => {
+  console.log('trigger emitTwo event')
+})
+
+triggerHandlers('emitOne')
