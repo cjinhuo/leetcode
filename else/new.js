@@ -1,7 +1,7 @@
-function myNew(target, ...rest) {
-  let child = Object.create(target.prototype)
-  let result = target.apply(child, rest)
-  return typeof result === 'object' ? result : child
+function myNew(target, ...args) {
+  const protoObj = Object.create(target.prototype)
+  const result = target.apply(protoObj, args)
+  return typeof result === 'object' ? result : protoObj
 }
 
 function A(name, age) {

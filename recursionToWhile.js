@@ -10,23 +10,20 @@
 
 function sum(x, y) {
   if (y > 0) {
-    return sum.bind(null, x + 1, y - 1);
+    return sum.bind(null, x + 1, y - 1)
   } else {
-    return x;
+    return x
   }
 }
 function trampoline(f) {
   console.log(f)
   while (f && f instanceof Function) {
-    f = f();
+    f = f()
   }
-  return f;
+  return f
 }
-console.log(trampoline(sum(1, 100000)))
+console.log(trampoline(sum(1, 10)))
 // // sum(1, 100000)
-
-
-
 
 // function Fibonacci2(n, ac1 = 1, ac2 = 1) {
 //   if (n <= 1) { return ac2 };
