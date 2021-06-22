@@ -6,6 +6,7 @@
  * }
  */
 /**
+ * 获取倒数第几个节点
  * @param {ListNode} head
  * @param {number} k
  * @return {ListNode}

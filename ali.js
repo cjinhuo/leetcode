@@ -15,11 +15,11 @@
 // console.log(a,b,c)
 
 function destructuringArray(ary, str) {
-  var tmp = str.replace(/[\[\]\.]/g, ''); //正则去除[] 去除...
-  console.log(tmp);
-  console.log('var ' + tmp + ';' + str + '=' + JSON.stringify(ary) + ';return {' + tmp + '};');
-  return new Function('var ' + tmp + ';' + str + '=' + JSON.stringify(ary) + ';return {' + tmp + '};')();
+  var tmp = str.replace(/[\[\]\.]/g, '') //正则去除[] 去除...
+  console.log('var ' + str + '=' + JSON.stringify(ary) + ';return {' + tmp + '};')
+  eval('var ' + str + '=' + JSON.stringify(ary))
+  console.log(ab)
+  // return
 }
 // test([1, [2, 4], 3], "[a,[b,d,e],c]");
-
-console.log(destructuringArray([1, [2, [100], 4], 3], '[a,[b,[ab],d,e],c]'));
+console.log(destructuringArray([1, [2, [100], 4], 3], '[a,[b,[ab],d,e],c]'))

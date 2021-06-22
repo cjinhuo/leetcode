@@ -12,35 +12,60 @@ Function.prototype.myCall = function (context, ...args) {
   return result
 }
 
+// Function.prototype.myApply = function (context, args) {
+//   if (this === Function.prototype) {
+//     // 防止Function.prototype.myCall()直接执行
+//     return undefined
+//   }
+//   context = context || window
+//   const fn = Symbol()
+//   context[fn] = this
+//   let result = null
+//   if (Array.isArray(args)) {
+//     result = context[fn](...args)
+//   } else {
+//     result = context[fn]()
+//   }
+//   delete context[fn]
+//   return result
+// }
+
 Function.prototype.myApply = function (context, args) {
-  if (this === Function.prototype) {
-    // 防止Function.prototype.myCall()直接执行
-    return undefined
-  }
   context = context || window
-  const fn = Symbol()
-  context[fn] = this
+  const s = Symbol()
+  context[s] = this
   let result = null
   if (Array.isArray(args)) {
-    result = context[fn](...args)
+    result = context[s](...args)
   } else {
     result = context[fn]()
   }
-  delete context[fn]
+  delete context[s]
   return result
 }
 
+// Function.prototype.myBind = function (context, ...args1) {
+//   if (this === Function.prototype) {
+//     throw new TypeError('Error')
+//   }
+//   const _this = this
+//   return function F(...args2) {
+//     // 判断是否用于构造函数
+//     if (this instanceof F) {
+//       return new _this(...args1, ...args2)
+//     }
+//     return _this.apply(context, args1.concat(args2))
+//   }
+// }
+
 Function.prototype.myBind = function (context, ...args1) {
-  if (this === Function.prototype) {
-    throw new TypeError('Error')
-  }
-  const _this = this
-  return function F(...args2) {
-    // 判断是否用于构造函数
-    if (this instanceof F) {
-      return new _this(...args1, ...args2)
-    }
-    return _this.apply(context, args1.concat(args2))
+  // if (this === Function.prototype) throw new TypeError('Error')
+  // const _this = this
+  // return function fn(...args2) {
+  //   return _this.apply(context, args1.concat(args2))
+  // }
+  return (...args2) => {
+    this.apply(context, args1.concat(args2))
   }
 }
 

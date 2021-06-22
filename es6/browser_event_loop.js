@@ -43,32 +43,34 @@ setTimeout(() => {
   console.log(222)
 })
 setTimeout(() => {
-  process.nextTick(function () {
-    console.log('1');
-  })
   new Promise(function (resolve) {
-    console.log('2');
-    resolve();
+    console.log('2')
+    resolve()
   }).then(function () {
     console.log('3')
   })
+  // process.nextTick(function () {
+  //   console.log('1')
+  // })
 })
 
 new Promise(function (resolve) {
-  console.log('7');
-  resolve();
+  console.log('7')
+  resolve()
 }).then(() => {
   console.log(8)
 })
 
 setTimeout(() => {
-  process.nextTick(function () {
-    console.log('4');
-  })
+  // process.nextTick(function () {
+  //   console.log('4')
+  // })
   new Promise(function (resolve) {
-    console.log('5');
-    resolve();
+    console.log('5')
+    resolve()
   }).then(function () {
     console.log('6')
   })
 })
+
+// start 7 8 222 2 5 1 4 3 6

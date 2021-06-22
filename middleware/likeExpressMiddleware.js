@@ -61,6 +61,7 @@ class LikeExpress {
 
   handle(req, res, stack) {
     const next = async () => {
+      debugger
       const middleware = stack.shift()
       if (middleware) {
         return middleware(req, res, next)

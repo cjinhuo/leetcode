@@ -1,26 +1,26 @@
 // 一段时间内被连续触发时，应该被刷新这个时间
 // 最简单的版本
 const debounce = (fn, delay = 300) => {
-  let timer = null;
+  let timer = null
   return (...args) => {
-    clearInterval(timer);
+    clearInterval(timer)
     timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, delay);
-  };
-};
+      fn.apply(null, args)
+    }, delay)
+  }
+}
 
 // 加上isImmediate，也就是第一次触发
 const advanceDebounce = (fn, delay = 300, isImmediate = true) => {
-  let timer = null;
+  let timer = null
   return (...args) => {
     if (isImmediate) {
-      fn.apply(this, args);
-      isImmediate = false;
+      fn.apply(null, args)
+      isImmediate = false
     }
-    clearInterval(timer);
+    clearInterval(timer)
     timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, delay);
-  };
-};
+      fn.apply(null, args)
+    }, delay)
+  }
+}
