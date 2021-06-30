@@ -29,4 +29,6 @@ function mergeSort(arr) {
   return arr
 }
 
+function mergeSort(arr) {}
+
 console.log(mergeSort([10, 2, 3, 4, 5]))

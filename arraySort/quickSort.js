@@ -24,4 +24,4 @@ function quickSort(arr) {
   sort(0, arr.length - 1)
   return arr
 }
-console.log(quickSort([10, 3, 2, -1, 5, 4], 4))
+console.log(quickSort([10, 3, 2, -1, 5, 4]))
