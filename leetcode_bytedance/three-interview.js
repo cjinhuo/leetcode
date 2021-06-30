@@ -44,20 +44,21 @@ transform({
     username: '2',
     department: 'A-X-Y',
   },
-})[
-  {
-    name: 'A',
-    path: 'A',
-    children: [
-      {
-        name: '0',
-        path: 'A-B',
-        children: [
-          { name: '0', path: 'A-B-C', children: [] },
-          { name: '1', path: 'A-B-D', children: [] },
-        ],
-      },
-      { name: '2', path: 'A-X', children: [{ name: '2', path: 'A-X-Y', children: [] }] },
-    ],
-  }
-]
+})
+// [
+//   {
+//     name: 'A',
+//     path: 'A',
+//     children: [
+//       {
+//         name: '0',
+//         path: 'A-B',
+//         children: [
+//           { name: '0', path: 'A-B-C', children: [] },
+//           { name: '1', path: 'A-B-D', children: [] },
+//         ],
+//       },
+//       { name: '2', path: 'A-X', children: [{ name: '2', path: 'A-X-Y', children: [] }] },
+//     ],
+//   }
+// ]
