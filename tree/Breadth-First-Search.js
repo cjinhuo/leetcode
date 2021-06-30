@@ -1,21 +1,22 @@
 let tree = require('./treeData')
 // 非递归 广度优先搜索遍历 bfs => Breadth-First-Search
-let bfsWithoutRecursion = function (root) {
+function iterationBfs(root) {
   const stack = [root]
   const result = []
   while (stack.length !== 0) {
     const node = stack.shift()
-    result.push(node.val)
     if (node.left) {
       stack.push(node.left)
     }
     if (node.right) {
       stack.push(node.right)
     }
+    result.push(node.val)
   }
-  console.log(result)
   return result
 }
+
+console.log(iterationBfs(tree))
 
 // 递归
 let bfsWithRecursion = function (root) {
