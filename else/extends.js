@@ -16,3 +16,5 @@ Son.prototype = myCreate(Parent.prototype)
 
 Son.prototype.constructor = Son
 const s = new Son('doudou', 18)
+
+//line=readline()
