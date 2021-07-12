@@ -5,6 +5,13 @@ function subscribe(key, fn) {
   handles[key].push(fn)
 }
 
+function offSub(key, fn) {
+  const res = handles[key]
+  if (res) {
+    handles[key] = res.filter(cb => fn !== cb)
+  }
+}
+
 function triggerHandlers(key) {
   const res = handles[key]
   res &&
@@ -13,9 +20,11 @@ function triggerHandlers(key) {
     })
 }
 
-subscribe('emitOne', () => {
+const emitOneCb = () => {
   console.log('trigger emitOne event')
-})
+}
+
+subscribe('emitOne', emitOneCb)
 
 subscribe('emitOne', () => {
   console.log('another one callback')
@@ -24,5 +33,7 @@ subscribe('emitOne', () => {
 subscribe('emitTwo', () => {
   console.log('trigger emitTwo event')
 })
+
+offSub('emitOne', emitOneCb)
 
 triggerHandlers('emitOne')
