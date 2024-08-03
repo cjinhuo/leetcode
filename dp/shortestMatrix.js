@@ -45,6 +45,7 @@ function dpTwoWalk(matrix) {
         matrix[i][j] = matrix[i][j] + Math.min(matrix[i + 1][j], matrix[i][j + 1]);
     }
   }
+
   return matrix[0][0]
 }
 
@@ -56,4 +57,10 @@ let m = [
   [2, 3, 4, 5, 5, 6],
   [10, 23, 34, 45, 25, 14]
 ]
+// 从终点向前开始计算路径距离
+// [
+//   ['38', '38', 37, 34, 30, 26],
+//   [39, '37', '34', '30', '25', '20'],
+//   [151, 141, 118, 84, 39, '14']
+// ]
 console.log(dpTwoWalk(m))
