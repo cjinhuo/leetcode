@@ -9,6 +9,9 @@
 // [ ] [c] [a] [t] [s] [a] [n] [d] [o] [g]
 // [1] [0] [0] [1] [1] [0] [0] [1] [0] [0]
 // false
+// [ ] [c] [a] [t] [s] [a] [n] [d] [d] [o] [g]
+// [1] [0] [0] [1] [1] [0] [0] [1] [0] [0] [1]
+// false
 // [ ] [l] [e] [e] [d] [c] [o] [d] [e]
 // [1] [0] [0] [0] [1] [0] [0] [0] [1]
 const wordBreak = function (s, wordDict) {
@@ -43,9 +46,12 @@ const wordBreakOptimize = function (s, wordDict) {
       }
     }
   }
+  console.log('dp', trueSet)
   return trueSet.has(s.length)
 }
 
 // wordBreak('leetcode', ['leet', 'code'])
 // wordBreak('catsanddog', ["cats", "dog", "sand", "and", "cat"])
+
 wordBreakOptimize('catsanddog', ["cats", "dog", "sand", "and", "cat"])
+// wordBreakOptimize('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', ["a", "aa", "aaa", "aaaa", "aaaaa", "aaaaaa", "aaaaaaa", "aaaaaaaa", "aaaaaaaaa", "aaaaaaaaaa"])
