@@ -33,7 +33,7 @@ function matchPinyin(data, target, startIndex, endIndex) {
     // 为什么要重置前一个的 matchScore 和 dpTable
     matchScores[currentMatchPos - 1] = 0;
     dpTable[currentMatchPos - 1] = [0, 0, -1, -1];
-
+    console.log("current str", data.pinyinString[currentMatchPos - 1])
     for (; currentMatchPos <= pinyinLength; currentMatchPos++) {
       console.log('pipei', pinyinString[currentMatchPos - 1])
       let prevScore = currentScore;
@@ -95,29 +95,29 @@ function matchPinyin(data, target, startIndex, endIndex) {
 
   if (matchPath[pinyinLength][targetLength] === undefined) return undefined;
   console.log('match', matchPath)
-  let gIndex = pinyinLength;
-  let tIndex = targetLength;
-  // console.log('matchPath', matchPath);
-  // console.log('dpTable', dpTable)
-  const matchResults = [];
-  for (let zIndex = data.originalIndices[startIndex]; tIndex > 0;) {
-    const [start, end] = matchPath[gIndex][tIndex];
-    matchResults.push([startIndex + start, startIndex + end]);
-    gIndex = data.originalIndices[start + startIndex] - zIndex - 1;
-    const matchedCount = end - start + 1
-    tIndex -= matchedCount;
-  }
-  matchResults.reverse();
-  return matchResults;
+  // let gIndex = pinyinLength;
+  // let tIndex = targetLength;
+  // // console.log('matchPath', matchPath);
+  // // console.log('dpTable', dpTable)
+  // const matchResults = [];
+  // for (let zIndex = data.originalIndices[startIndex]; tIndex > 0;) {
+  //   const [start, end] = matchPath[gIndex][tIndex];
+  //   matchResults.push([startIndex + start, startIndex + end]);
+  //   gIndex = data.originalIndices[start + startIndex] - zIndex - 1;
+  //   const matchedCount = end - start + 1
+  //   tIndex -= matchedCount;
+  // }
+  // matchResults.reverse();
+  // return matchResults;
 }
 
 // 测试代码
-const originalStr = 'ano是node测试';
+const originalStr = 'nd你的';
 // const originalStr = 'a你';
 // const data = { "pinyinStr": "no你ni的de", "boundary": [[-1, -1], [0, 0], [1, 1], [2, 2], [2, 3], [2, 3], [3, 5], [3, 6], [3, 6]], "originalIndices": [0, 1, 2, 5], "length": 4 }
 const data = getBoundary(originalStr);
 console.log('data', data)
-const input = 'sces';
+const input = 'nnide';
 console.log(matchPinyin(data, input, 0, originalStr.length));
 
 

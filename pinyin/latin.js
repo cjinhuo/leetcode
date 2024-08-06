@@ -32,7 +32,9 @@ function matchPinyin(data, target) {
   if (matchIndex < targetLength) return undefined
 
   const defaultDpTableValue = [0, 0, -1, -1]
-  // [匹配字符个数：一个汉字算一个字符， 匹配字母个数：一个拼音中的一个字母算一个， 开始位置, 结束位置]
+  // x你 => x你ni target = ni
+  // n => [1, 1, xx, xx] i => [1, 2, xx, xx]
+  // [匹配字符个数：一个汉字算一个字符，统计当前已匹配的字符个数， 匹配字母个数：一个拼音中的一个字母算一个，统计当前已匹配的字母数， 原始字符串的开始位置, 原始字符串的结束位置]
   const dpTable = Array.from({ length: pinyinLength }, () => defaultDpTableValue)
   const dpScores = Array(pinyinLength).fill(0)
   const matchPath = Array.from({ length: pinyinLength }, () => Array(targetLength))
@@ -44,8 +46,10 @@ function matchPinyin(data, target) {
     let matchedPinyinIndex = matchPositions[matchIndex]
     let currentDpTableItem = getDpTableByIndex(matchedPinyinIndex - 1)
 
+    // console.log('current str:', pinyinString[matchedPinyinIndex])
     // 重置上一个得分，外层 for 循环的第一次肯定有字母匹配，如果不重置会导致 dpTable 不更新
     matchedPinyinIndex > 1 && (dpScores[matchedPinyinIndex - 1] = 0)
+    // dpTable[matchedPinyinIndex - 1] = defaultDpTableValue
 
     for (; matchedPinyinIndex < pinyinLength; matchedPinyinIndex++) {
       // matchedPinyinIndex 为 0 时返回默认值
@@ -62,12 +66,9 @@ function matchPinyin(data, target) {
       const isNewWord = matchedPinyinIndex === boundary[matchedPinyinIndex][1] &&
         prevBoundaryStart !== boundary[matchedPinyinIndex][0]
 
-      // for pinyin：是否是连续匹配的首字母，比如你 上一个是 n，下一个 i， isContinuation 为 true
+      // for pinyin：是否是连续匹配的首字母，比如”你“ 上一个是 n，下一个 i，也适配多音字，比如“的” dedi，匹配到 de 后不会在匹配 di
       const isContinuation = prevMatchedStrings > 0 && prevBoundaryEnd === boundary[matchedPinyinIndex][1]
       const isEqual = pinyinString[matchedPinyinIndex] === target[matchIndex]
-      if (isEqual) {
-        debugger
-      }
       if (isEqual && (isNewWord || isContinuation)) {
         const currentScore = prevMatchedLetters * 2 + 1
 
@@ -75,14 +76,16 @@ function matchPinyin(data, target) {
         // 只有 大于等于 前一次分数才更新元素状态，比如： no_node, 输入 nod 匹配到后面的 nod
         if (currentScore >= prevScore) {
           dpScores[matchedPinyinIndex] = currentScore
-          dpTable[matchedPinyinIndex] = [prevMatchedLetters + ~~isNewWord, matchedLettersCount, boundary[matchedPinyinIndex][0], boundary[matchedPinyinIndex][1]]
+          // prevMatchedStrings + ~~isNewWord:连续匹配的字符个数
+          dpTable[matchedPinyinIndex] = [prevMatchedStrings + ~~isNewWord, matchedLettersCount, boundary[matchedPinyinIndex][0], boundary[matchedPinyinIndex][1]]
         }
 
         // 只有 大于 才需要替换 matchPath，不然就命中前面，比如 no_no 输入 no 命中第一次的 no
         if (currentScore > prevScore) {
           // 原始字符串对应的下标
           const originalStringIndex = boundary[matchedPinyinIndex][0];
-          matchPath[matchedPinyinIndex][matchIndex] = [originalStringIndex - prevMatchedStrings, originalStringIndex, matchedLettersCount]
+          // 首字母时 prevMatchedStrings = 0，不是首字母时应该加 1，下标才能对的上
+          matchPath[matchedPinyinIndex][matchIndex] = [originalStringIndex - prevMatchedStrings + ~~!isNewWord, originalStringIndex, matchedLettersCount]
         } else {
           matchPath[matchedPinyinIndex][matchIndex] = matchPath[matchedPinyinIndex - 1][matchIndex]
         }
@@ -104,10 +107,50 @@ function matchPinyin(data, target) {
 
   if (matchPath[pinyinLength - 1][targetLength - 1] === undefined) return undefined;
 
-  console.log('matchPath', matchPath)
-
+  const hitIndices = []
+  for (let i = targetLength - 1; i >= 0;) {
+    const [start, end, matchedLetters] = matchPath[pinyinLength - 1][i]
+    hitIndices.unshift([start, end])
+    i -= matchedLetters
+  }
+  return hitIndices
 }
-const originalStr = 'ano是node测试'
-const data = getBoundary(originalStr)
-const input = 'nod'
-console.log(matchPinyin(data, input))
+
+function getHighlightText(str) {
+  return `\x1b[32m${str}\x1b[0m`
+}
+
+function highlightTextWithRanges(str, ranges) {
+  const result = [];
+  let index = 0;
+
+  for (let range of ranges) {
+    const [start, end] = range;
+
+    if (index < start) {
+      result.push(str.slice(index, start));
+    }
+
+    result.push(getHighlightText(str.slice(start, end + 1)))
+
+    index = end + 1;
+  }
+
+  if (index < str.length) {
+    result.push(str.slice(index));
+  }
+
+  return result.join('');
+}
+
+const originalString = 'nd你的这是测试'
+const input = 'nzsc'
+const hitIndices = matchPinyin(getBoundary(originalString), input)
+console.log('hitIndices', hitIndices)
+console.log('original string:', originalString, 'input:', input)
+console.log(highlightTextWithRanges(originalString, hitIndices))
+
+
+
+
+

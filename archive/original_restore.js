@@ -34,6 +34,7 @@ function matchPinyin(data, target, startIndex, endIndex) {
     let currentMatchPos = matchPositions[targetIndex];
     let currentScore = matchScores[currentMatchPos - 1];
     let currentTableEntry = dpTable[currentMatchPos - 1];
+    console.log("current str", data.pinyinString[currentMatchPos - 1])
     matchScores[currentMatchPos - 1] = 0;
     dpTable[currentMatchPos - 1] = [0, 0, -1, -1];
 
@@ -48,9 +49,9 @@ function matchPinyin(data, target, startIndex, endIndex) {
       const isContinuation = prevMatchedLetters > 0
         && prevEnd === boundaryArray[currentMatchPos][1] - endBoundary
         && pinyinArray[currentMatchPos - 2] === target[targetIndex - 2];
-      if (pinyinArray[currentMatchPos - 1] === 'n') {
-        debugger
-      }
+      // if (pinyinArray[currentMatchPos - 1] === 'n') {
+      //   debugger
+      // }
       if (prevMatchedLetters > 0 && prevEnd === boundaryArray[currentMatchPos][1] - endBoundary && !(currentMatchPos >= 2 && targetIndex >= 2))
         throw 'assertion failed: (i<2||j<2)';
 
@@ -97,8 +98,8 @@ function matchPinyin(data, target, startIndex, endIndex) {
 // const input = 'nd';
 
 
-const originalStr = 'ano是node测试'
+const originalStr = 'nd你的_'
 const data = getBoundary(originalStr)
-const input = 'nod'
+const input = 'nnide'
 
 console.log(matchPinyin(data, input, 0, originalStr.length));
