@@ -1,7 +1,4 @@
-
-
-
-// 给定一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式，字符串只能是0-9的数字。
+// 给定一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式，字符串只能是0-9的数字。
 // 示例：
 // 输入: "25525511135"
 // 输出: ["255.255.11.135", "255.255.111.35"]
@@ -18,7 +15,7 @@ var restoreIpAddresses = function (s) {
     if (surplusStr.length > (4 - result.length) * 3) {
       return
     }
-    if ((result.length === 4 && surplusStr.length !== 0) || (result.length > 4 || result.length < 4 && surplusStr.length === 0) ) {
+    if ((result.length === 4 && surplusStr.length !== 0) || (result.length > 4 || result.length < 4 && surplusStr.length === 0)) {
       return
     }
     if (result.length === 4 && surplusStr.length === 0) {
@@ -29,7 +26,7 @@ var restoreIpAddresses = function (s) {
     if (surplusStr[0] != 0 && surplusStr.length > 1) {
       recursion([...result, surplusStr.slice(0, 2)], surplusStr.slice(2))
     }
-    if (surplusStr[0] != 0 && parseInt(surplusStr.slice(0, 3)) <=255 && surplusStr.length > 2) {
+    if (surplusStr[0] != 0 && parseInt(surplusStr.slice(0, 3)) <= 255 && surplusStr.length > 2) {
       recursion([...result, surplusStr.slice(0, 3)], surplusStr.slice(3))
     }
   }

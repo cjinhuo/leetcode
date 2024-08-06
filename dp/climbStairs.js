@@ -20,18 +20,18 @@
 // }
 
 // loop O(n) O(n)
-// function climbStairs(n) {
-//   if (n === 1 || n === 2) {
-//     return n
-//   }
-//   const dp = []
-//   dp[1] = 1
-//   dp[2] = 2
-//   for (let i = 3; i <= n; i++) {
-//     dp[i] = dp[i - 1] + dp[i - 2]
-//   }
-//   return dp[n]
-// }
+function climbStairsByDp(n) {
+  if (n === 1 || n === 2) {
+    return n
+  }
+  const dp = []
+  dp[1] = 1
+  dp[2] = 2
+  for (let i = 3; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2]
+  }
+  return dp[n]
+}
 
 // 数组平移法
 function climbStairs(n) {
