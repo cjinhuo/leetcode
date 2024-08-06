@@ -42,7 +42,7 @@ function getBoundary(str) {
     originalLength: pinyinArray.length
   }
 }
-console.log(getBoundary('no你d的'))
+// console.log(getBoundary('no你d的'))
 // {
 //   pinyinString: 'no你ni的dedi_百bai度du搜sou索suo',
 //     boundary: [
