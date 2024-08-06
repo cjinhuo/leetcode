@@ -12,7 +12,7 @@ function getBoundary(str) {
   }
 
   // 为什么要 -1 -1 呢？
-  const boundary = []
+  const boundary = [[-1, -1]]
   let accumulator = 0
   const originalIndices = []
   const totalChars = []
@@ -42,7 +42,7 @@ function getBoundary(str) {
     originalLength: pinyinArray.length
   }
 }
-console.log(getBoundary('no你d的'))
+// console.log(getBoundary('no你的_百度搜索'))
 // {
 //   pinyinString: 'no你ni的dedi_百bai度du搜sou索suo',
 //     boundary: [
