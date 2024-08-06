@@ -11,7 +11,6 @@ function getBoundary(str) {
     pinyinArray[i] = [currentChar, ...(charInPinyin ? charInPinyin.slice() : [])]
   }
 
-  // 为什么要 -1 -1 呢？
   const boundary = []
   let accumulator = 0
   const originalIndices = []

@@ -38,31 +38,34 @@ function matchPinyin(data, target) {
   const dpTable = Array.from({ length: pinyinLength }, () => defaultDpTableValue)
   const dpScores = Array(pinyinLength).fill(0)
   const matchPath = Array.from({ length: pinyinLength }, () => Array(targetLength))
-  const getDpTableByIndex = (_index) => dpTable[_index] || defaultDpTableValue
+  const getDpTableByIndex = (_i) => dpTable[_i] || defaultDpTableValue
 
   // matchIndex 和上面的 matchIndex 表示同一个意思，所以取同样的名字
   for (let matchIndex = 0; matchIndex < matchPositions.length; matchIndex++) {
-    // 表示匹配字符在 pinyinString 中的开始位置，可能后面也有相同字符，所以需要遍历至结尾，来计算连续匹配的个数
+    // 表示匹配字符在 pinyinString 中的开始位置，可能后面也有相同字符，需要遍历至结尾，来计算连续匹配的个数
     let matchedPinyinIndex = matchPositions[matchIndex]
-    let currentDpTableItem = getDpTableByIndex(matchedPinyinIndex - 1)
 
-    // console.log('current str:', pinyinString[matchedPinyinIndex])
-    // 重置上一个得分，外层 for 循环的第一次肯定有字母匹配，如果不重置会导致 dpTable 不更新
-    matchedPinyinIndex > 1 && (dpScores[matchedPinyinIndex - 1] = 0)
-    // dpTable[matchedPinyinIndex - 1] = defaultDpTableValue
+
+    console.log('current str:', pinyinString[matchedPinyinIndex])
+
+    let currentDpTableItem = getDpTableByIndex(matchedPinyinIndex - 1)
+    let currentScore = dpScores[matchedPinyinIndex - 1] || 0
+    // 上面缓存完，立即重置上一次的 dptable 和 score，避免影响下一次循环的计算，可以理解成消耗掉上一次的 dptable 和 score
+    // 如 nonod, 输入 nod，首次遍历 n 时，score 为 [1, 0, 1, 0, d], 遍历 o 时，score 为 [0, 1*2+1, 0, 1*2+1, 0], 遍历 d 时，score 为 [0, 1*2+1, 0, 0, 2*2+1]
+    matchedPinyinIndex >= 1 && (dpScores[matchedPinyinIndex - 1] = 0, dpTable[matchedPinyinIndex - 1] = defaultDpTableValue)
 
     for (; matchedPinyinIndex < pinyinLength; matchedPinyinIndex++) {
       // matchedPinyinIndex 为 0 时返回默认值
-      const prevScore = dpScores[matchedPinyinIndex - 1] || 0
+      const prevScore = currentScore
       // string => 一个字符，如一个汉字或一个英文
       // letter => 一个拼音中的一个字母
       const [prevMatchedStrings, prevMatchedLetters, prevBoundaryStart, prevBoundaryEnd] = currentDpTableItem
-      // 用于缓存当次结果，给下次使用，因为下方有个逻辑：如果 gap 不是 0 || 1 将被重置
+      // 提前缓存未计算的 score 和 dptable 作为下一次的判断，因为当前 for 循环会从命中的下标遍历至结尾，例如 noo，输入 no，首次遍历 o 时拿到 n 的 dpTable [1, 1, 0, 0]，遍历第二个 o 时应拿到 [0, 0, -1, -1]，而不是 [2, 2, 1, 1]，只有在上面首次遍历才缓存了上一次的 dpTable 和 score
+      // score 也是如此，例如 noo，输入 no，首次遍历 o 时拿到 n 的 score 1，遍历第二个 o 时应拿到 0，而不是 3
       currentDpTableItem = dpTable[matchedPinyinIndex]
-      // currentTableEntry = dpTable[currentMatchPos];
-      //matchedPinyinIndex === boundaryArray[matchedPinyinIndex][1]
-      // 的dedi 的 =>[x, y] d => [x, y+1] e => [x, y+1] d => [x, y+2] di => [x, y+2]
+      currentScore = dpScores[matchedPinyinIndex]
 
+      // 的dedi 的 =>[x, y] d => [x, y+1] e => [x, y+1] d => [x, y+2] di => [x, y+2]
       const isNewWord = matchedPinyinIndex === boundary[matchedPinyinIndex][1] &&
         prevBoundaryStart !== boundary[matchedPinyinIndex][0]
 
@@ -92,7 +95,7 @@ function matchPinyin(data, target) {
         continue
       }
 
-      // 如果没有匹配到相同字符，matchPath 服用上一次的值
+      // 如果没有匹配到相同字符，matchPath 复用上一次的值
       dpScores[matchedPinyinIndex] = prevScore
       matchPath[matchedPinyinIndex][matchIndex] = matchPath[matchedPinyinIndex - 1][matchIndex]
       // 当前匹配与上一个匹配的 gap ，比如 abc, 第一次是 a 第二次是 b，gap = 1,第一次 a 第二次是 c ，gap = 2，
@@ -143,8 +146,8 @@ function highlightTextWithRanges(str, ranges) {
   return result.join('');
 }
 
-const originalString = 'nd你的这是测试'
-const input = 'nzsc'
+const originalString = '黑神话悟空black'
+const input = 'ha'
 const hitIndices = matchPinyin(getBoundary(originalString), input)
 console.log('hitIndices', hitIndices)
 console.log('original string:', originalString, 'input:', input)
