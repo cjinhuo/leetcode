@@ -1,11 +1,13 @@
+const { getBoundary } = require('./origin_boundary')
+
 function matchPinyin(data, target, startIndex, endIndex) {
   // 转换成拼音后的数据
   startIndex = startIndex !== null && startIndex !== undefined ? startIndex : 0;
   endIndex = endIndex !== null && endIndex !== undefined ? endIndex : data.length;
 
   // 提取子数组
-  const pinyinArray = data.pc.slice(data.za[startIndex], data.za[endIndex]);
-  const boundaryArray = data.boundary.slice(data.za[startIndex], data.za[endIndex] + 1);
+  const pinyinArray = data.pinyinString.slice(data.originalIndices[startIndex], data.originalIndices[endIndex]);
+  const boundaryArray = data.boundary.slice(data.originalIndices[startIndex], data.originalIndices[endIndex] + 1);
   const pinyinLength = pinyinArray.length;
   const targetLength = target.length;
 
@@ -46,7 +48,9 @@ function matchPinyin(data, target, startIndex, endIndex) {
       const isContinuation = prevMatchedLetters > 0
         && prevEnd === boundaryArray[currentMatchPos][1] - endBoundary
         && pinyinArray[currentMatchPos - 2] === target[targetIndex - 2];
-
+      if (pinyinArray[currentMatchPos - 1] === 'n') {
+        debugger
+      }
       if (prevMatchedLetters > 0 && prevEnd === boundaryArray[currentMatchPos][1] - endBoundary && !(currentMatchPos >= 2 && targetIndex >= 2))
         throw 'assertion failed: (i<2||j<2)';
 
@@ -74,13 +78,13 @@ function matchPinyin(data, target, startIndex, endIndex) {
   }
 
   if (matchPath[pinyinLength][targetLength] === undefined) return matchResults;
-
+  console.log('match', matchPath)
   let gIndex = pinyinLength;
   let tIndex = targetLength;
-  for (let zIndex = data.za[startIndex]; tIndex > 0;) {
+  for (let zIndex = data.originalIndices[startIndex]; tIndex > 0;) {
     const [start, end, matchedCount] = matchPath[gIndex][tIndex];
     matchResults.push([startIndex + start, startIndex + end, matchedCount]);
-    gIndex = data.za[start + startIndex] - zIndex - 1;
+    gIndex = data.originalIndices[start + startIndex] - zIndex - 1;
     tIndex -= matchedCount;
   }
   matchResults.reverse();
@@ -88,8 +92,13 @@ function matchPinyin(data, target, startIndex, endIndex) {
 }
 
 // 测试代码
-const originalStr = 'no你的';
-const data = { "pc": "no你ni的de", "boundary": [[-1, -1], [0, 0], [1, 1], [2, 2], [2, 3], [2, 3], [3, 5], [3, 6], [3, 6], [3, 8], [3, 8], [4, 10], [5, 11], [5, 12], [5, 12]], "za": [0, 1, 2, 5, 10], "length": 4 }
-const input = 'nd';
+// const originalStr = 'no你的';
+// const data = { "pinyinString": "no你ni的de", "boundary": [[-1, -1], [0, 0], [1, 1], [2, 2], [2, 3], [2, 3], [3, 5], [3, 6], [3, 6], [3, 8], [3, 8], [4, 10], [5, 11], [5, 12], [5, 12]], "originalIndices": [0, 1, 2, 5, 10], "length": 4 }
+// const input = 'nd';
+
+
+const originalStr = 'ano是node测试'
+const data = getBoundary(originalStr)
+const input = 'nod'
 
 console.log(matchPinyin(data, input, 0, originalStr.length));

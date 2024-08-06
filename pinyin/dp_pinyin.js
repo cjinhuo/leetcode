@@ -90,12 +90,11 @@ function matchPinyin(data, target, startIndex, endIndex) {
       // 下一个字符的拼音对应还是当前字符, 比如 测ce试shi, s 和 h 都对应 "试" 的下标
       // boundaryArray[currentMatchPos + 1][0] === boundaryArray[currentMatchPos][0]
       dpTable[currentMatchPos] = gap === 0 || (currentMatchPos < pinyinLength && gap === 1 && boundaryArray[currentMatchPos + 1][0] === boundaryArray[currentMatchPos][0]) ? dpTable[currentMatchPos - 1] : [0, 0, -1, -1];
-      console.log('dpTable', dpTable)
     }
   }
 
   if (matchPath[pinyinLength][targetLength] === undefined) return undefined;
-
+  console.log('match', matchPath)
   let gIndex = pinyinLength;
   let tIndex = targetLength;
   // console.log('matchPath', matchPath);
@@ -118,7 +117,7 @@ const originalStr = 'ano是node测试';
 // const data = { "pinyinStr": "no你ni的de", "boundary": [[-1, -1], [0, 0], [1, 1], [2, 2], [2, 3], [2, 3], [3, 5], [3, 6], [3, 6]], "originalIndices": [0, 1, 2, 5], "length": 4 }
 const data = getBoundary(originalStr);
 console.log('data', data)
-const input = 'cs';
+const input = 'sces';
 console.log(matchPinyin(data, input, 0, originalStr.length));
 
 

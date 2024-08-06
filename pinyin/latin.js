@@ -1,9 +1,5 @@
 const { getBoundary } = require('./boundary')
 
-
-
-
-// 明天先写  anonode 匹配 node，然后再考虑拼音匹配
 const matchPath = [
   [null, null, null, null, null],
   [null, null, null, null, null],
@@ -36,7 +32,7 @@ function matchPinyin(data, target) {
   if (matchIndex < targetLength) return undefined
 
   const defaultDpTableValue = [0, 0, -1, -1]
-  // 当前字母的 [连续字母匹配个数, score， 开始位置, 结束位置]
+  // [匹配字符个数：一个汉字算一个字符， 匹配字母个数：一个拼音中的一个字母算一个， 开始位置, 结束位置]
   const dpTable = Array.from({ length: pinyinLength }, () => defaultDpTableValue)
   const dpScores = Array(pinyinLength).fill(0)
   const matchPath = Array.from({ length: pinyinLength }, () => Array(targetLength))
@@ -46,43 +42,59 @@ function matchPinyin(data, target) {
   for (let matchIndex = 0; matchIndex < matchPositions.length; matchIndex++) {
     // 表示匹配字符在 pinyinString 中的开始位置，可能后面也有相同字符，所以需要遍历至结尾，来计算连续匹配的个数
     let matchedPinyinIndex = matchPositions[matchIndex]
+    let currentDpTableItem = getDpTableByIndex(matchedPinyinIndex - 1)
+
+    // 重置上一个得分，外层 for 循环的第一次肯定有字母匹配，如果不重置会导致 dpTable 不更新
+    matchedPinyinIndex > 1 && (dpScores[matchedPinyinIndex - 1] = 0)
+
     for (; matchedPinyinIndex < pinyinLength; matchedPinyinIndex++) {
       // matchedPinyinIndex 为 0 时返回默认值
       const prevScore = dpScores[matchedPinyinIndex - 1] || 0
-      const [prevMatchedLetters, prevBoundaryStart, prevBoundaryEnd] = getDpTableByIndex(matchedPinyinIndex - 1)
-
+      // string => 一个字符，如一个汉字或一个英文
+      // letter => 一个拼音中的一个字母
+      const [prevMatchedStrings, prevMatchedLetters, prevBoundaryStart, prevBoundaryEnd] = currentDpTableItem
+      // 用于缓存当次结果，给下次使用，因为下方有个逻辑：如果 gap 不是 0 || 1 将被重置
+      currentDpTableItem = dpTable[matchedPinyinIndex]
+      // currentTableEntry = dpTable[currentMatchPos];
       //matchedPinyinIndex === boundaryArray[matchedPinyinIndex][1]
       // 的dedi 的 =>[x, y] d => [x, y+1] e => [x, y+1] d => [x, y+2] di => [x, y+2]
+
       const isNewWord = matchedPinyinIndex === boundary[matchedPinyinIndex][1] &&
         prevBoundaryStart !== boundary[matchedPinyinIndex][0]
 
       // for pinyin：是否是连续匹配的首字母，比如你 上一个是 n，下一个 i， isContinuation 为 true
-      const isContinuation = prevMatchedLetters > 0 && prevBoundaryEnd === boundary[matchedPinyinIndex][1]
+      const isContinuation = prevMatchedStrings > 0 && prevBoundaryEnd === boundary[matchedPinyinIndex][1]
       const isEqual = pinyinString[matchedPinyinIndex] === target[matchIndex]
+      if (isEqual) {
+        debugger
+      }
       if (isEqual && (isNewWord || isContinuation)) {
         const currentScore = prevMatchedLetters * 2 + 1
 
+        const matchedLettersCount = prevMatchedLetters + 1;
         // 只有 大于等于 前一次分数才更新元素状态，比如： no_node, 输入 nod 匹配到后面的 nod
         if (currentScore >= prevScore) {
           dpScores[matchedPinyinIndex] = currentScore
-          dpTable[matchedPinyinIndex] = [prevMatchedLetters + ~~isNewWord, boundary[matchedPinyinIndex][0], boundary[matchedPinyinIndex][1]]
+          dpTable[matchedPinyinIndex] = [prevMatchedLetters + ~~isNewWord, matchedLettersCount, boundary[matchedPinyinIndex][0], boundary[matchedPinyinIndex][1]]
         }
 
         // 只有 大于 才需要替换 matchPath，不然就命中前面，比如 no_no 输入 no 命中第一次的 no
         if (currentScore > prevScore) {
+          // 原始字符串对应的下标
           const originalStringIndex = boundary[matchedPinyinIndex][0];
-          matchPath[matchedPinyinIndex][matchIndex] = [originalStringIndex - prevMatchedLetters, originalStringIndex]
+          matchPath[matchedPinyinIndex][matchIndex] = [originalStringIndex - prevMatchedStrings, originalStringIndex, matchedLettersCount]
         } else {
           matchPath[matchedPinyinIndex][matchIndex] = matchPath[matchedPinyinIndex - 1][matchIndex]
         }
         continue
       }
+
       // 如果没有匹配到相同字符，matchPath 服用上一次的值
       dpScores[matchedPinyinIndex] = prevScore
       matchPath[matchedPinyinIndex][matchIndex] = matchPath[matchedPinyinIndex - 1][matchIndex]
       // 当前匹配与上一个匹配的 gap ，比如 abc, 第一次是 a 第二次是 b，gap = 1,第一次 a 第二次是 c ，gap = 2，
       // 这里指的是原文，而不是 pinyin，比如 c测试，假如 c 已经命中了，那么“测“和 c 的 gap 为 1，复用 dpTable 中的值
-      const gap = boundary[matchedPinyinIndex][0] - getDpTableByIndex(matchedPinyinIndex - 1)[1];
+      const gap = boundary[matchedPinyinIndex][0] - getDpTableByIndex(matchedPinyinIndex - 1)[2];
       // 表示下一个字符的拼音对应还是当前汉字, 比如 试shi, s 和 h 都对应 "试" 的下标
       const isSameWord = () => boundary[matchedPinyinIndex][0] === boundary[matchedPinyinIndex + 1][0]
       const isWithInRange = matchedPinyinIndex < pinyinLength - 1
@@ -92,15 +104,10 @@ function matchPinyin(data, target) {
 
   if (matchPath[pinyinLength - 1][targetLength - 1] === undefined) return undefined;
 
-
-  console.log(matchPath[pinyinLength - 1][targetLength - 1])
-  // let gIndex = pinyinLength;
-  // let tIndex = targetLength;
-  // console.log('matchPath', matchPath);
-  // console.log('dpTable', dpTable)
+  console.log('matchPath', matchPath)
 
 }
 const originalStr = 'ano是node测试'
 const data = getBoundary(originalStr)
-const input = 'scs'
+const input = 'nod'
 console.log(matchPinyin(data, input))
