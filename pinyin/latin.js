@@ -1,8 +1,6 @@
 const { getBoundary } = require('./boundary')
 
-const originalStr = 'ano是node'
-// const originalStr = 'a你';
-// const data = { "pinyinStr": "no你ni的de", "boundary": [[-1, -1], [0, 0], [1, 1], [2, 2], [2, 3], [2, 3], [3, 5], [3, 6], [3, 6]], "originIndices": [0, 1, 2, 5], "length": 4 }
+const originalStr = 'anonode'
 const data = getBoundary(originalStr)
 console.log('data', data)
 const input = 'node'
@@ -37,8 +35,6 @@ function matchPinyin(data, target) {
     }
   }
 
-  // console.log('matchPositions', pinyinString, target, matchPositions)
-
   // 如果输入字符小于匹配到的字符，判定无效
   if (matchIndex < targetLength) return undefined
 
@@ -46,7 +42,7 @@ function matchPinyin(data, target) {
   const defaultDpTableValue = [0, 0, -1, -1]
   // 当前字母的 [连续字母匹配个数, score， 开始位置, 结束位置]
   const dpTable = Array.from({ length: pinyinLength }, () => defaultDpTableValue)
-  // const scores = Array(pinyinLength + 1).fill(0)
+  const dpScores = Array(pinyinLength + 1).fill(0)
   const matchPath = Array.from({ length: pinyinLength }, () => Array(targetLength))
 
   // matchIndex 和上面的 matchIndex 表示同一个意思，所以取同样的名字
@@ -55,7 +51,8 @@ function matchPinyin(data, target) {
     let matchedPinyinIndex = matchPositions[matchIndex]
     for (; matchedPinyinIndex < pinyinLength; matchedPinyinIndex++) {
       // matchedPinyinIndex 为 0 时返回默认值
-      const [prevMatchedLetters, prevScore, prevBoundaryStart, prevBoundaryEnd] = dpTable[matchedPinyinIndex - 1] || defaultDpTableValue
+      const prevScore = dpScores[matchedPinyinIndex - 1] || 0
+      const [prevMatchedLetters, prevBoundaryStart, prevBoundaryEnd] = dpTable[matchedPinyinIndex - 1] || defaultDpTableValue
 
       //matchedPinyinIndex === boundaryArray[matchedPinyinIndex][1]
       // 的dedi 的 =>[x, y] d => [x, y+1] e => [x, y+1] d => [x, y+2] di => [x, y+2]
@@ -70,21 +67,24 @@ function matchPinyin(data, target) {
 
         // 只有 大于等于 前一次分数才更新元素状态，比如： no_node, 输入 nod 匹配到后面的 nod
         if (currentScore >= prevScore) {
-          dpTable[matchedPinyinIndex] = [prevMatchedLetters + ~~isNewWord, currentScore, boundary[matchedPinyinIndex][0], boundary[matchedPinyinIndex][1]]
+          dpScores[matchedPinyinIndex] = currentScore
+          dpTable[matchedPinyinIndex] = [prevMatchedLetters + ~~isNewWord, boundary[matchedPinyinIndex][0], boundary[matchedPinyinIndex][1]]
         }
 
         // 只有 大于 才需要替换 matchPath，不然就命中前面，比如 no_no 输入 no 命中第一次的 no
         if (currentScore > prevScore) {
           const originalStringIndex = boundary[matchedPinyinIndex][0];
           matchPath[matchedPinyinIndex][matchIndex] = [originalStringIndex - prevMatchedLetters, originalStringIndex]
+        } else {
+          matchPath[matchedPinyinIndex][matchIndex] = matchPath[matchedPinyinIndex - 1][matchIndex]
         }
         continue
       }
       // 如果没有匹配到相同字符，matchPath 服用上一次的值
+      dpScores[matchedPinyinIndex] = prevScore
       matchPath[matchedPinyinIndex][matchIndex] = matchPath[matchedPinyinIndex - 1][matchIndex]
     }
 
-    // console.log('dpTable', dpTable)
   }
 
   if (matchPath[pinyinLength - 1][targetLength - 1] === undefined) return undefined;

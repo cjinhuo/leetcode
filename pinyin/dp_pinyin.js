@@ -113,7 +113,7 @@ function matchPinyin(data, target, startIndex, endIndex) {
 }
 
 // 测试代码
-const originalStr = 'anonode';
+const originalStr = 'anotnode';
 // const originalStr = 'a你';
 // const data = { "pinyinStr": "no你ni的de", "boundary": [[-1, -1], [0, 0], [1, 1], [2, 2], [2, 3], [2, 3], [3, 5], [3, 6], [3, 6]], "originalIndices": [0, 1, 2, 5], "length": 4 }
 const data = getBoundary(originalStr);
