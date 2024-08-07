@@ -1,17 +1,5 @@
 const { getBoundary } = require('./boundary')
 
-const matchPath = [
-  [null, null, null, null, null],
-  [null, null, null, null, null],
-  [null, [2, 2, 1], null, null, null],
-  [null, [2, 2, 1], [2, 3, 2], null, null],
-  [null, [2, 2, 1], [2, 3, 2], null, null],
-  [null, [2, 2, 1], [2, 3, 2], null, null],
-  [null, [2, 2, 1], [2, 3, 2], [4, 6, 3], null],
-  // [开始位置， 结束位置， 匹配的个数] 匹配的个数没有必要存储，用结束位置减去开始位置即可
-  [null, [2, 2, 1], [2, 3, 2], [4, 6, 3], [4, 7, 4]],
-]
-
 function matchPinyin(data, target) {
   const { pinyinString, boundary, originIndices } = data
   const targetLength = target.length
@@ -135,7 +123,6 @@ function highlightTextWithRanges(str, ranges) {
     }
 
     result.push(getHighlightText(str.slice(start, end + 1)))
-
     index = end + 1;
   }
 
